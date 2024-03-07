@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/orders
+    password: postgres
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+
+clients:
+  account-service: http://account-service:8083
+
+order-service:
+  orders-topic-name: orders
+  orders-matched-topic-name: orders-matched
+  stocks-topic-name: stocks
+  stocks-topic-consumer-group: stocks-topic-consumer

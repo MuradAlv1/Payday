@@ -1,0 +1,130 @@
+version: '3.9'
+services:
+
+  zookeeper:
+    container_name: zookeeper
+    image: docker.io/bitnami/zookeeper:3.8
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+    ports:
+      - '2181'
+
+  kafka:
+    container_name: kafka
+    image: docker.io/bitnami/kafka:3.2
+    depends_on:
+      zookeeper:
+        condition: service_started
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      ALLOW_PLAINTEXT_LISTENER: yes
+
+  postgres:
+    container_name: postgres
+    restart: on-failure
+    build:
+      context: ./
+      dockerfile: db/Dockerfile
+    image: postgres:latest
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+
+  stock-service:
+    container_name: stock-service
+    build:
+      context: ./
+      dockerfile: stock-service/Dockerfile
+    image: stock-service:latest
+    ports:
+      - '8080:8080'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  order-service:
+    container_name: order-service
+    build:
+      context: ./
+      dockerfile: order-service/Dockerfile
+    image: order-service:latest
+    ports:
+      - '8081:8081'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  order-executor:
+    container_name: order-executor
+    build:
+      context: ./
+      dockerfile: order-executor/Dockerfile
+    image: order-executor:latest
+    ports:
+      - '8082:8082'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+
+  account-service:
+    container_name: account-service
+    build:
+      context: ./
+      dockerfile: account-service/Dockerfile
+    image: account-service:latest
+    ports:
+      - '8083:8083'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+      redis:
+        condition: service_started
+
+
+  notification-service:
+    container_name: notification-service
+    build:
+      context: ./
+      dockerfile: notification-service/Dockerfile
+    image: notification-service:latest
+    ports:
+      - '8084:8084'
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+
+

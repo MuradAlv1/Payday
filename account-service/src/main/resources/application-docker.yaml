@@ -1,0 +1,33 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/accounts
+    password: postgres
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+security:
+  jwt:
+    secretKey: 123123213123123123123123123123213123213213123213123321312312312321321321323
+    access-token-validity-in-seconds: 60000
+
+account-service:
+  amount-reserve-topic-name: amount-reserve
+  orders-filled-topic-name: order-filled
+  reserve-amount-request-topic-name: reserve-amount-requests
+  users-topic-name: users
+  order-filled-topic-consumer-group: orders-filled-topic-consumer
+  reserve-amount-request-topic-consumer-group: reserve-amount-requests-topic-consumer

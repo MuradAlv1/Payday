@@ -1,0 +1,11 @@
+server:
+  port: 8084
+
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+
+
+clients:
+  account-service: http://account-service:8083/api/v1/accounts
+

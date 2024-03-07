@@ -1,0 +1,25 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/orders
+    password: postgres
+    username: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: kafka:9092
+
+order-executor-service:
+  orders-matched-topic-name: orders-matched
+  amount-reserve-topic-name: amount-reserve
+  reserve-amount-request-topic-name: reserve-amount-requests
+  orders-filled-topic-name: order-filled
+  orders-failed-topic-name: order-failed
+  orders-matched-topic-consumer-group: orders-matched-topic-consumer
+  amount-reserve-topic-consumer-group: amount-reserve-topic-consumer
+
